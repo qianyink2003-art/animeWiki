@@ -1,0 +1,20 @@
+# 1. 忽略 Docker 绑定的本地数据目录
+postgres-data/
+
+# 2. 忽略 Node.js 依赖包（这绝对不能传）
+node_modules/
+
+# 3. 忽略打包生成的静态文件
+dist/
+build/
+
+# 4. 忽略环境变量文件（非常重要，里面有数据库密码！）
+.env
+.env.local
+
+# 5. 忽略 WebStorm IDE 的配置文件
+.idea/
+
+# 6. 其他日志和缓存
+*.log
+.npm/
