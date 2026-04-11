@@ -19,7 +19,7 @@ fastify.register(repoInit);
 fastify.get('/', (request, response) => {
     response.send("finish");
 })
-
+//启动服务
 fastify.listen({
         port:3000
     },
