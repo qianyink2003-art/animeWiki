@@ -61,6 +61,7 @@ const Schedule = z.object({
     logicTime: z.string().optional(),
     description: z.string().optional(),
     totalEpisode: z.int().optional(),
+    isFinished: z.boolean(),
 })
 export type ScheduleSchema = z.infer<typeof Schedule>;
 
@@ -86,14 +87,13 @@ const Music = z.object({
 });
 export type MusicSchema = z.infer<typeof Music>;
 
-const AnimeData  = z.object({
+export const AnimeData  = z.object({
     id: z.nanoid(),
     title: z.string(),
     jpTitle: z.string(),
-    category: z.enum(Category),
+    cate: z.enum(Category),
     adapt: z.enum(Adapt),
     schedule: z.array(Schedule),
-    isFinished: z.boolean(),
 
     officialWeb: z.url().optional(),
     bgmID: z.string().optional(),
@@ -103,3 +103,14 @@ const AnimeData  = z.object({
     music: z.array(Music).optional()
 })
 export type AnimeDataSchema = z.infer<typeof AnimeData>;
+
+export const BasicData = AnimeData.pick({
+    title:true,
+    jpTitle:true,
+    cate:true,
+    adapt:true,
+    officialWeb:true,
+    bgmID:true,
+    PV:true,
+}).strict();
+export type BasicDataSchema = z.infer<typeof BasicData>;

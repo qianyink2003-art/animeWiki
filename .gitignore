@@ -18,3 +18,5 @@ build/
 # 6. 其他日志和缓存
 *.log
 .npm/
+
+public/

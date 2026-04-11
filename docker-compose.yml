@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: anime-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: qianyink
+      POSTGRES_PASSWORD: Qianyi_nk20031224
+      POSTGRES_DB: anime_db
+      TZ: Asia/Shanghai
+    volumes:
+      # 左边改成您项目里的相对路径，右边是容器内路径
+      - ./postgres-data:/var/lib/postgresql/data
