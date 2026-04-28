@@ -7,7 +7,7 @@ import path from "node:path";
 import {rootPath} from "../server.js";
 import {pipeline} from "stream/promises";
 import {AnimeData} from "@anime/shared";
-async function dbManageRouterInit(fastify: FastifyInstance) {
+export default async function dbManageRouterInit(fastify: FastifyInstance) {
     fastify.register(multipart);
 
     /**
@@ -22,8 +22,8 @@ async function dbManageRouterInit(fastify: FastifyInstance) {
      * @example Error Response (400)
      * //{"status": "Error", "message": "Invalid Input Data"}
      */
-    fastify.post("/", async (request, reply) => {
-        const animeId = nanoid(12);
+    fastify.post("/insert", async (request, reply) => {
+        const id = nanoid(12)
         const parts = request.parts();
 
         let savePath = "";
@@ -31,7 +31,8 @@ async function dbManageRouterInit(fastify: FastifyInstance) {
         //Stage.1 解析并处理数据
         for await (const part of parts) {
             if(part.type === "file"){
-                savePath = path.join(rootPath, `public/posters/${animeId}.webp`);
+                console.time('sharp')
+                savePath = path.resolve(rootPath, `../public/posters/${id}.webp`);
                 const outStream = fs.createWriteStream(savePath);
                 const transformer = sharp().resize({
                     width: 1000,
@@ -42,6 +43,7 @@ async function dbManageRouterInit(fastify: FastifyInstance) {
                     quality: 90
                 })
                 await pipeline(part.file, transformer, outStream);
+                console.timeEnd('sharp');
             } else {
                 formData[part.fieldname] = part.value;
             }
@@ -55,10 +57,17 @@ async function dbManageRouterInit(fastify: FastifyInstance) {
                 status: "Error",
                 message: "Invalid Input Data"
             })
+            console.log(safeData.error)
             return
         }
+        if(!savePath) {
+            reply.code(401).send({
+                status: "Failed",
+                message: "缺少海报，请补充后提交"
+            })
+        }
         //Stage.3 插入数据
-        //await fastify.repo.insert(safeData.data, animeId);
+        await fastify.aniDb.add(safeData.data, id);
         reply.code(200).send({
             status: "Success",
             message: "Insert Anime Success!"

@@ -1,26 +1,20 @@
-import BasicRepository from "../repository/BasicRepository.js"
+import AniDb from "../services/AnimeDbUtils.js";
 
 import fp from "fastify-plugin"
 import type {FastifyInstance} from "fastify";
 
-interface Repo {
-    basicRepo: BasicRepository
-}
 declare module "fastify" {
     interface FastifyInstance {
-        repo:Repo
+        aniDb:AniDb
     }
 }
 
 async function repoInit(fastify:FastifyInstance) {
-    const basicRepo = new BasicRepository(fastify.db);
-    await basicRepo.creatTable();
+    const aniDb = new AniDb(fastify.db);
 
-    const repo = {
-        basicRepo: basicRepo
-    }
+    await aniDb.createTable();
 
-    fastify.decorate("repo", repo);
+    fastify.decorate("aniDb", aniDb);
 }
 
 export default fp(repoInit, {
